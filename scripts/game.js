@@ -10,6 +10,7 @@ class Game {
   #view;
   #bubbles;
   #numOfBubbles;
+  #score;
   constructor(view, bubbles) {
     this.#view = view;
     this.#bubbles = bubbles;
@@ -17,22 +18,36 @@ class Game {
   }
 
   addBubble() {
-    const position = randomPosition(this.#view.dimensions);
+    const position = randomPosition(this.#view.getInfo().dimensions);
     const diameter = randomInt(60) + 40;
     const id = 'bubble--'.concat(++this.#numOfBubbles);
     const bubble = new Bubble(position, diameter, 3, id);
+    if (this.#view.doesIntersectRightEdge(bubble.getInfo())) { return -1 };
     this.#bubbles.push(bubble);
     return bubble;
   };
 
   moveBubbles() {
-    console.log(this.#numOfBubbles);
     this.#bubbles.forEach(bubble => bubble.move());
   }
 
   getInfo() {
     const bubbles = [];
     this.#bubbles.forEach(bubble => bubbles.push(bubble.getInfo()));
-    return { bubbles, view: this.#view };
+    return { bubbles, view: this.#view.getInfo(), score: this.#score };
+  }
+
+  #removeBubble(id) {
+    const bubbleToRemove = this.#bubbles.find(bubble =>
+      bubble.getInfo().id === id);
+    const index = this.#bubbles.indexOf(bubbleToRemove);
+    this.#bubbles.splice(index, 1);
+  }
+
+  updateBubbles(bubble) {
+    if (this.#view.doesIntersectBottomEdge(bubble)) {
+      this.#score--;
+      this.#removeBubble(bubble.id);
+    }
   }
 }

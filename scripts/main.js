@@ -29,7 +29,10 @@ const updateBubble = bubble => {
 const updateBubbles = game => {
   game.moveBubbles();
   const { bubbles } = game.getInfo();
-  bubbles.forEach(bubble => updateBubble(bubble));
+  bubbles.forEach(bubble => {
+    updateBubble(bubble);
+    game.updateBubbles(bubble);
+  });
 };
 
 const startGame = (game) => {
@@ -38,7 +41,9 @@ const startGame = (game) => {
   setInterval(() => {
     if (counter % 35 === 0) {
       const bubble = game.addBubble();
-      drawBubble(bubble, view);
+      if (bubble != -1) {
+        drawBubble(bubble, view);
+      }
     }
     updateBubbles(game);
     counter++;
@@ -46,9 +51,9 @@ const startGame = (game) => {
 };
 
 const main = () => {
-  const view = { dimensions: { height: 600, width: 1200 }, id: 'bubble-view' };
+  const view = new View({ height: 600, width: 1200 }, 'bubble-view');
   const game = new Game(view, []);
-  drawView(view);
+  drawView(game.getInfo().view);
   startGame(game);
 }
 
