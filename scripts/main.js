@@ -1,70 +1,55 @@
-const createBubbleElement = (bubble, viewport) => {
-  const { id } = bubble.getInfo();
+const drawBubble = (bubble, view) => {
   const bubbleElement = document.createElement('div');
-  const bubbleViewport = document.getElementById(viewport.id);
+  const viewElement = document.getElementById(view.id);
+  const { id } = bubble.getInfo();
   bubbleElement.id = id;
   bubbleElement.className = 'bubble';
-  bubbleViewport.appendChild(bubbleElement);
+  bubbleElement.style.position = 'absolute';
+  viewElement.appendChild(bubbleElement);
 };
 
-const createBubbleViewport = bubbleViewport => {
-  const viewportElement = document.createElement('div');
-  const view = document.getElementById('view');
-  viewportElement.id = bubbleViewport.id;
-  view.appendChild(viewportElement);
+const drawView = view => {
+  const viewElement = document.createElement('div');
+  const containerElement = document.getElementById('container');
+  containerElement.appendChild(viewElement);
+  viewElement.id = view.id;
+  viewElement.style.height = view.dimensions.height;
+  viewElement.style.width = view.dimensions.width;
+  viewElement.style.position = 'relative';
 };
 
-const drawBubble = bubble => {
-  const { id, position: { top, left }, diameter } = bubble.getInfo();
+const updateBubble = bubble => {
+  const { id, position: { top, left }, diameter } = bubble;
   const bubbleElement = document.getElementById(id);
   bubbleElement.style.top = top;
   bubbleElement.style.left = left;
-  bubbleElement.style.position = 'absolute';
   bubbleElement.style.width = diameter;
 };
 
-const drawViewport = viewport => {
-  const viewportElement = document.getElementById(viewport.id);
-  viewportElement.style.height = viewport.dimensions.height;
-  viewportElement.style.width = viewport.dimensions.width;
-  viewportElement.style.position = 'relative';
+const updateBubbles = game => {
+  game.moveBubbles();
+  const { bubbles } = game.getInfo();
+  bubbles.forEach(bubble => updateBubble(bubble));
 };
 
-const randomInt = limit => Math.floor(Math.random() * limit);
-
-const randomPosition = ({ height, width }) => {
-  const randomLeft = randomInt(width);
-  const randomTop = randomInt(height / 2);
-  return { top: randomTop, left: randomLeft };
-};
-
-const updateBubble = bubble => setInterval(() => {
-  bubble.move();
-  drawBubble(bubble);
-}, 30);
-
-const createBubbles = id => bubbleViewport => {
-  const position = randomPosition(bubbleViewport.dimensions);
-  const diameter = randomInt(60) + 40;
-  return new Bubble(position, diameter, 5, 'bubble-' + id++);
-};
-
-const startGame = (bubbles, bubbleViewport) => {
-  const createBubble = createBubbles(1);
+const startGame = (game) => {
+  const { view } = game.getInfo();
+  let counter = 1;
   setInterval(() => {
-    const bubble = createBubble(bubbleViewport);
-    bubbles.push(bubble);
-    createBubbleElement(bubble, bubbleViewport);
-    updateBubble(bubble);
-  }, 1000);
+    if (counter % 35 === 0) {
+      const bubble = game.addBubble();
+      drawBubble(bubble, view);
+    }
+    updateBubbles(game);
+    counter++;
+  }, 30);
 };
 
 const main = () => {
-  const bubbles = [];
-  const bubbleViewport = { dimensions: { height: 600, width: 1200 }, id: 'bubble-viewport' };
-  createBubbleViewport(bubbleViewport);
-  drawViewport(bubbleViewport);
-  startGame(bubbles, bubbleViewport);
+  const view = { dimensions: { height: 600, width: 1200 }, id: 'bubble-view' };
+  const game = new Game(view, []);
+  drawView(view);
+  startGame(game);
 }
 
 window.onload = main;
