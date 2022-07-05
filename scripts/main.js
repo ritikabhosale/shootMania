@@ -18,7 +18,7 @@ const drawBubble = bubble => {
   bubbleElement.style.top = bubble.position.top;
   bubbleElement.style.left = bubble.position.left;
   bubbleElement.style.position = 'absolute';
-  bubbleElement.style.height = bubble.size;
+  bubbleElement.style.width = bubble.size;
 };
 
 const drawViewport = viewport => {
