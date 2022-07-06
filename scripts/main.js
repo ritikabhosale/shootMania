@@ -26,12 +26,23 @@ const updateBubble = bubble => {
   bubbleElement.style.width = diameter;
 };
 
+const eraseBubble = (game, bubble) => {
+  const { id } = game.getInfo().view;
+  const viewElement = document.getElementById(id);
+  const bubbleElement = document.getElementById(bubble.id);
+  viewElement.removeChild(bubbleElement);
+};
+
 const updateBubbles = game => {
   game.moveBubbles();
   const { bubbles } = game.getInfo();
   bubbles.forEach(bubble => {
-    updateBubble(bubble);
-    game.updateBubbles(bubble);
+    if (game.hasBubbleCrossed(bubble)) {
+      game.removeBubble(bubble);
+      eraseBubble(game, bubble); // screen
+      return;
+    }
+    updateBubble(bubble); //screen
   });
 };
 

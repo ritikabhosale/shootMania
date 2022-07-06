@@ -37,17 +37,14 @@ class Game {
     return { bubbles, view: this.#view.getInfo(), score: this.#score };
   }
 
-  #removeBubble(id) {
-    const bubbleToRemove = this.#bubbles.find(bubble =>
-      bubble.getInfo().id === id);
-    const index = this.#bubbles.indexOf(bubbleToRemove);
+  removeBubble({ id }) {
+    const toRemove = this.#bubbles.find(bubble => bubble.getInfo().id === id);
+    const index = this.#bubbles.indexOf(toRemove);
     this.#bubbles.splice(index, 1);
+    this.#score--;
   }
 
-  updateBubbles(bubble) {
-    if (this.#view.doesIntersectBottomEdge(bubble)) {
-      this.#score--;
-      this.#removeBubble(bubble.id);
-    }
+  hasBubbleCrossed(bubble) {
+    return this.#view.doesIntersectBottomEdge(bubble);
   }
 }
