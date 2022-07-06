@@ -9,11 +9,13 @@ const randomPosition = ({ height, width }) => {
 class Game {
   #view;
   #bubbles;
+  #cannon;
   #numOfBubbles;
   #score;
-  constructor(view, bubbles) {
+  constructor(view, bubbles, cannon) {
     this.#view = view;
     this.#bubbles = bubbles;
+    this.#cannon = cannon;
     this.#numOfBubbles = 0;
   }
 
@@ -31,12 +33,6 @@ class Game {
     this.#bubbles.forEach(bubble => bubble.move());
   }
 
-  getInfo() {
-    const bubbles = [];
-    this.#bubbles.forEach(bubble => bubbles.push(bubble.getInfo()));
-    return { bubbles, view: this.#view.getInfo(), score: this.#score };
-  }
-
   removeBubble({ id }) {
     const toRemove = this.#bubbles.find(bubble => bubble.getInfo().id === id);
     const index = this.#bubbles.indexOf(toRemove);
@@ -46,5 +42,11 @@ class Game {
 
   hasBubbleCrossed(bubble) {
     return this.#view.doesIntersectBottomEdge(bubble);
+  }
+
+  getInfo() {
+    const bubbles = [];
+    this.#bubbles.forEach(bubble => bubbles.push(bubble.getInfo()));
+    return { bubbles, view: this.#view.getInfo(), score: this.#score, cannon: this.#cannon };
   }
 }

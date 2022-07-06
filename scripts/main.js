@@ -1,21 +1,17 @@
-const drawBubble = (bubble, view) => {
+const drawBubble = (bubble) => {
+  const bubblesFrame = document.getElementById('bubble-view');
   const bubbleElement = document.createElement('div');
-  const viewElement = document.getElementById(view.id);
   const { id } = bubble.getInfo();
   bubbleElement.id = id;
   bubbleElement.className = 'bubble';
   bubbleElement.style.position = 'absolute';
-  viewElement.appendChild(bubbleElement);
+  bubblesFrame.appendChild(bubbleElement);
 };
 
-const drawView = view => {
-  const viewElement = document.createElement('div');
-  const containerElement = document.getElementById('container');
-  containerElement.appendChild(viewElement);
-  viewElement.id = view.id;
-  viewElement.style.height = view.dimensions.height;
-  viewElement.style.width = view.dimensions.width;
-  viewElement.style.position = 'relative';
+const updateView = view => {
+  const bubblesFrame = document.getElementById('bubble-view');
+  bubblesFrame.style.height = view.dimensions.height;
+  bubblesFrame.style.width = view.dimensions.width;
 };
 
 const updateBubble = bubble => {
@@ -26,11 +22,10 @@ const updateBubble = bubble => {
   bubbleElement.style.width = diameter;
 };
 
-const eraseBubble = (game, bubble) => {
-  const { id } = game.getInfo().view;
-  const viewElement = document.getElementById(id);
+const eraseBubble = (bubble) => {
+  const bubblesFrame = document.getElementById('bubble-view');
   const bubbleElement = document.getElementById(bubble.id);
-  viewElement.removeChild(bubbleElement);
+  bubblesFrame.removeChild(bubbleElement);
 };
 
 const updateBubbles = game => {
@@ -39,7 +34,7 @@ const updateBubbles = game => {
   bubbles.forEach(bubble => {
     if (game.hasBubbleCrossed(bubble)) {
       game.removeBubble(bubble);
-      eraseBubble(game, bubble); // screen
+      eraseBubble(bubble); // screen
       return;
     }
     updateBubble(bubble); //screen
@@ -47,24 +42,35 @@ const updateBubbles = game => {
 };
 
 const startGame = (game) => {
-  const { view } = game.getInfo();
   let counter = 1;
   setInterval(() => {
     if (counter % 35 === 0) {
       const bubble = game.addBubble();
       if (bubble != -1) {
-        drawBubble(bubble, view);
+        drawBubble(bubble);
       }
     }
-    updateBubbles(game);
+    updateBubbles(game); //screen
     counter++;
   }, 30);
 };
 
+const drawCannon = (cannon) => {
+  const { position: { top, left }, id } = cannon;
+  const cannonElement = document.createElement('div');
+  const container = document.getElementById('container');
+  container.appendChild(cannonElement);
+  cannonElement.id = id;
+  cannonElement.style.top = top;
+  cannonElement.style.left = left;
+};
+
 const main = () => {
-  const view = new View({ height: 600, width: 1200 }, 'bubble-view');
-  const game = new Game(view, []);
-  drawView(game.getInfo().view);
+  const view = new View({ height: 600, width: 1200 });
+  const cannon = { position: { top: 10, left: 850 }, id: 'cannon' };
+  const game = new Game(view, [], cannon);
+  drawCannon(game.getInfo().cannon);
+  updateView(game.getInfo().view);
   startGame(game);
 }
 

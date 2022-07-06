@@ -1,9 +1,7 @@
 class View {
   #dimensions;
-  #id;
-  constructor(dimensions, id) {
+  constructor(dimensions) {
     this.#dimensions = dimensions;
-    this.#id = id;
   }
   doesIntersectRightEdge(bubble) {
     const requiredWidth = bubble.position.left + bubble.diameter;
@@ -15,6 +13,6 @@ class View {
   }
   getInfo() {
     const { height, width } = this.#dimensions;
-    return { dimensions: { height, width }, id: this.#id };
+    return { dimensions: { height, width } };
   }
 }
